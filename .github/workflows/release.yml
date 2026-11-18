@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-gcc@v2
+        with:
+          version: '14'
+      - run: gcc -O2 -o bin/shae-fortran-matrix-calculator src/main.c -lm
+        shell: bash
+      - run: chmod +x bin/shae-fortran-matrix-calculator
+      - run: gh release create "${GITHUB_REF_NAME}" bin/shae-fortran-matrix-calculator --generate-notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
